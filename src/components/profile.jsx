@@ -23,7 +23,7 @@ const ProfilePage = () => {
         console.log("Headers:", headers);
 
         const response = await axios.get(
-          "http://localhost:4000/api/auth/profile",
+          "https://userserver-hx65.onrender.com/api/auth/profile",
           { headers }
         );
         console.log("Response:", response.data);
