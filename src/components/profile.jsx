@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -14,9 +16,7 @@ const ProfilePage = () => {
 
       const headers = {
         "Content-Type": "application/json",
-        // prettier-ignore
-
-        "Authorization": `Bearer ${TOKEN}`,
+        Authorization: `Bearer ${TOKEN}`,
       };
 
       try {
@@ -38,6 +38,26 @@ const ProfilePage = () => {
 
     fetchUserData();
   }, []);
+
+  const handleDelete = async () => {
+    const TOKEN = localStorage.getItem("token");
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${TOKEN}`,
+    };
+
+    try {
+      await axios.delete(
+        "https://userserver-hx65.onrender.com/api/auth/delete",
+        { headers }
+      );
+      localStorage.removeItem("token");
+      navigate("/");
+    } catch (error) {
+      setError(error);
+    }
+  };
 
   if (loading) {
     return (
@@ -94,6 +114,12 @@ const ProfilePage = () => {
             Error: {error.message}
           </div>
         )}
+        <button
+          onClick={handleDelete}
+          className="w-full px-4 py-2 font-bold text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
+        >
+          Delete Account
+        </button>
       </div>
     </div>
   );

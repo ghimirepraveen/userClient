@@ -69,7 +69,7 @@ const SignUpForm = () => {
           const backendErrors = error.response.data.errors;
           setErrors(backendErrors);
         } else {
-          console.error("Error submitting the form", error);
+          console.log("Error submitting the form", error);
         }
       }
     }
