@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Userlist = () => {
+const UserListPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,10 +21,13 @@ const Userlist = () => {
 
       try {
         const response = await axios.get(
-          "https://userserver-hx65.onrender.com/api/auth/allusers",
+          `https://userserver-hx65.onrender.com/api/auth/allusers?page=${currentPage}&limit=5`,
           { headers }
         );
-        setUsers(response.data);
+
+        const { users = [], totalPages = 1 } = response.data;
+        setUsers(Array.isArray(users) ? users : []);
+        setTotalPages(totalPages);
         setLoading(false);
       } catch (error) {
         if (error.response) {
@@ -39,7 +44,13 @@ const Userlist = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   if (loading) {
     return (
@@ -91,9 +102,28 @@ const Userlist = () => {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="text-xl">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Userlist;
+export default UserListPage;
