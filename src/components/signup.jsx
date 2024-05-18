@@ -11,6 +11,7 @@ const SignUpForm = () => {
     phone: "",
     password: "",
   });
+
   const [errors, setErrors] = useState({
     email: "",
     name: "",
@@ -18,6 +19,8 @@ const SignUpForm = () => {
     phone: "",
     password: "",
   });
+
+  const [backendError, setBackendError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,14 +65,18 @@ const SignUpForm = () => {
           "https://userserver-hx65.onrender.com/api/auth/signup",
           formData
         );
+
         console.log("Response:", response.data);
+
         navigateTo("/login");
       } catch (error) {
         if (error.response && error.response.data) {
           const backendErrors = error.response.data.errors;
-          setErrors(backendErrors);
+          console.log("Backend errors:", backendErrors);
+
+          setBackendError(backendErrors.message || "An error occurred");
         } else {
-          console.log("Error submitting the form", error);
+          setBackendError("An error occurred while submitting the form");
         }
       }
     }
@@ -155,6 +162,10 @@ const SignUpForm = () => {
               Sign Up
             </button>
           </div>
+
+          {backendError && (
+            <p className="mt-4 text-red-500 text-center">{backendError}</p>
+          )}
         </form>
 
         <p className="text-sm text-center">

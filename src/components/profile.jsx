@@ -31,6 +31,7 @@ const ProfilePage = () => {
 
         setLoading(false);
       } catch (error) {
+        console.log("Error:", error);
         setError(error);
         setLoading(false);
       }
@@ -55,8 +56,15 @@ const ProfilePage = () => {
       localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
+      console.log("Error:", error);
       setError(error);
+      setLoading(false);
     }
+  };
+
+  const handellogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
   };
 
   if (loading) {
@@ -67,11 +75,11 @@ const ProfilePage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-9xl bg-red-500 m-80">Error: {error.message}</div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="text-9xl bg-red-500 m-80">Error: {error.message}</div>
+  //   );
+  // }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -109,17 +117,28 @@ const ProfilePage = () => {
             <p className="text-sm text-gray-900">{user.phone}</p>
           </div>
         </div>
-        {error && (
-          <div className="text-red-500 text-sm mt-4">
-            Error: {error.message}
-          </div>
-        )}
+
         <button
           onClick={handleDelete}
           className="w-full px-4 py-2 font-bold text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
         >
           Delete Account
         </button>
+
+        <br></br>
+
+        <button
+          onClick={handellogout}
+          className="w-full px-4 py-2  font-bold text-white bg-gray-400 rounded hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
+        >
+          Logout
+        </button>
+
+        {error && (
+          <div className="text-red-500 text-sm mt-4">
+            Error: {error.message}
+          </div>
+        )}
       </div>
     </div>
   );
