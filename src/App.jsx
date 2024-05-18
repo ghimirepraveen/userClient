@@ -10,6 +10,10 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        <header className="bg-gray-800 text-white p-4 text-center w-full top-0 fixed">
+          <h1 className="text-2xl font-bold">User Authentication</h1>
+        </header>
+
         <Routes>
           <Route path="/" element={<SignUpForm />} />
           <Route path="/login" element={<LoginForm />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -28,11 +28,14 @@ const ProfilePage = () => {
         );
         console.log("Response:", response.data);
         setUser(response.data);
-
         setLoading(false);
       } catch (error) {
-        console.log("Error:", error);
-        setError(error);
+        const errorMessage =
+          error.response?.data?.error ||
+          error.message ||
+          "An error occurred while fetching the user data.";
+        console.error("Error fetching user data:", errorMessage);
+        setError(errorMessage);
         setLoading(false);
       }
     };
@@ -56,13 +59,15 @@ const ProfilePage = () => {
       localStorage.removeItem("token");
       navigate("/");
     } catch (error) {
-      console.log("Error:", error);
-      setError(error);
-      setLoading(false);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        "An error occurred while deleting the account.";
+      console.error("Error deleting account:", errorMessage);
+      setError(errorMessage);
     }
   };
-
-  const handellogout = () => {
+  const handelLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
@@ -75,11 +80,13 @@ const ProfilePage = () => {
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <div className="text-9xl bg-red-500 m-80">Error: {error.message}</div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div className="text-red-500 text-3xl text-center mt-20">
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -117,28 +124,35 @@ const ProfilePage = () => {
             <p className="text-sm text-gray-900">{user.phone}</p>
           </div>
         </div>
-
         <button
           onClick={handleDelete}
           className="w-full px-4 py-2 font-bold text-white bg-red-600 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
         >
           Delete Account
         </button>
-
-        <br></br>
-
         <button
-          onClick={handellogout}
-          className="w-full px-4 py-2  font-bold text-white bg-gray-400 rounded hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-4"
+          onClick={handelLogout}
+          className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-4"
         >
           Logout
         </button>
 
         {error && (
-          <div className="text-red-500 text-sm mt-4">
-            Error: {error.message}
-          </div>
+          <div className="text-red-500 text-sm mt-4">Error: {error}</div>
         )}
+        <div>
+          View all user list:- &nbsp;
+          <Link to="/users" className="text-indigo-600">
+            click here
+          </Link>
+          <br />
+          only admin can view all user list
+          <br />
+          use <span className="text-red-500">email:abcd@gmail.com</span>
+          <br />
+          <span className="text-red-500"> password:abcd@gmail.com</span>
+          &nbsp; while loging in
+        </div>
       </div>
     </div>
   );
